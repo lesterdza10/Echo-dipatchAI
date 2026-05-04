@@ -38,6 +38,7 @@ export async function POST(req: Request) {
       email,
       password: passwordHash
     })
+    const role = createdUser.role || 'user'
 
     return NextResponse.json(
       {
@@ -49,6 +50,7 @@ export async function POST(req: Request) {
           password: createdUser.password,
           createdAt: createdUser.createdAt,
           updatedAt: createdUser.updatedAt,
+          role,
         },
       },
       { status: 201 }

@@ -3,7 +3,8 @@ import mongoose from 'mongoose';
 export interface IUser extends mongoose.Document {
 	name: string;
 	email: string;
-	password: string;
+	password?: string;
+    role: 'user' | 'admin'|'partner'
 	createdAt?: Date;
 	updatedAt?: Date;
 }
@@ -12,8 +13,9 @@ const UserSchema: mongoose.Schema<IUser> = new mongoose.Schema(
 	{
 		name: { type: String, required: true },
 		email: { type: String, required: true, unique: true },
-		password: { type: String, required: true },
-	},
+		password: { type: String, required: false },
+		role: { type: String, enum: ['user', 'admin', 'partner'], default: 'user' },
+    },
 	{
 		timestamps: true,
 	}
