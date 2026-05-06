@@ -6,6 +6,7 @@ import { CircleDashed, Lock, Mail, User, X } from "lucide-react";
 import { AnimatePresence, motion, useSpring } from "motion/react";
 import Image from "next/image";
 import { signIn, useSession } from "next-auth/react";
+import { set } from "mongoose";
 type stepType = "login" | "signup" | "otp";
 function Authentication({
   open,
@@ -20,6 +21,7 @@ function Authentication({
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState("");
+  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const { data } = useSession();
   console.log(data);
   const handleSignup = async () => {
@@ -30,7 +32,7 @@ function Authentication({
         email,
         password,
       });
-      console.log(data);
+      setStep("otp");
       setLoading(false);
     } catch (error: any) {
       setLoading(false);
@@ -39,6 +41,24 @@ function Authentication({
       );
     }
   };
+  const handleVerifyEmail = async () => {
+    setLoading(true);
+    try {
+      const { data } = await axios.post("/api/auth/verify-email", {
+        email,
+        otp: otp.join(""),
+      });
+      console.log(data);
+      setStep("login");
+      setLoading(false);
+    } catch (error: any) {
+      setLoading(false);
+      setErr(
+        error.response.data.error || "An error occurred while verifying email",
+      );
+    }
+  };
+
   const handleLogin = async () => {
     setLoading(true);
     setErr("");
@@ -71,6 +91,19 @@ function Authentication({
   };
   const handleGoogleLogin = async () => {
     await signIn("google");
+  };
+  const handleOTPChange = (index: number, value: string) => {
+    if (/^\d*$/.test(value)) {
+      const newOtp = [...otp];
+      newOtp[index] = value;
+      setOtp(newOtp);
+    }
+    if (value && index < otp.length - 1) {
+      document.getElementById(`otp-${index + 1}`)?.focus();
+    }
+    if (!value && index > 0) {
+      document.getElementById(`otp-${index - 1}`)?.focus();
+    }
   };
   return (
     <AnimatePresence>
@@ -229,7 +262,7 @@ function Authentication({
                           onClick={handleSignup}
                         >
                           {!loading ? (
-                            "Sign Up"
+                            "Send OTP"
                           ) : (
                             <CircleDashed
                               size={20}
@@ -249,6 +282,49 @@ function Authentication({
                           Log in
                         </button>
                       </p>
+                    </motion.div>
+                  )}
+                  {step === "otp" && (
+                    <motion.div
+                      key="otp"
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -20 }}
+                    >
+                      <h2 className="text-xl font-semibold">
+                        Verify Your Email
+                      </h2>
+                      <div className="mt-6 flex justify-between gap-2">
+                        {otp.map((digit, index) => (
+                          <input
+                            key={index}
+                            type="text"
+                            id={`otp-${index}`}
+                            value={digit}
+                            maxLength={1}
+                            className="w-10 h-12 sm:w-12 sm:h-12 text-center text-lg border border-black/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+                            onChange={(e) =>
+                              handleOTPChange(index, e.target.value)
+                            }
+                          />
+                        ))}
+                      </div>
+                      {err && <p className="text-red-500 text-sm">*{err}</p>}
+
+                      <button
+                        className="mt-6 w-full h-11 rounded-xl bg-black text-white font-semibold hover:bg-gray-500 transition"
+                        onClick={handleVerifyEmail}
+                      >
+                        {!loading ? (
+                          "Verify and Create Account"
+                        ) : (
+                          <CircleDashed
+                            size={20}
+                            color="white"
+                            className="animate-spin"
+                          />
+                        )}
+                      </button>
                     </motion.div>
                   )}
                 </div>

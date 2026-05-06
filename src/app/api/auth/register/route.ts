@@ -1,7 +1,8 @@
-import { NextResponse } from 'next/server'
+import { NextResponse, userAgent } from 'next/server'
 import { connectDB } from '@/lib/db'
 import User from '@/models/usermodel'
 import bcrypt from 'bcryptjs'
+import { sendEmail } from '@/lib/SendMail'
 
 
 async function hashPassword(password: string): Promise<string> {
@@ -27,17 +28,44 @@ export async function POST(req: Request) {
     await connectDB()
 
     const existing = await User.findOne({ email }).lean()
-    if (existing) {
+    if (existing && existing.isEmailVerified) {
       return NextResponse.json({ error: 'User with this email already exists' }, { status: 409 })
     }
 
-    const passwordHash = await hashPassword(password)
+    const otp = Math.floor(100000 + Math.random() * 900000).toString()
+    const otpExpiresAt = new Date(Date.now() + 10 * 60 * 1000) // OTP valid for 10 minutes
 
-    const createdUser = await User.create({
+
+
+
+    const passwordHash = await hashPassword(password)
+    let createdUser
+    if (existing && !existing.isEmailVerified) {
+      existing.name = name,
+      existing.password = passwordHash,
+      existing.otp = otp,
+      existing.otpExpiresAt = otpExpiresAt,
+      createdUser = await existing.save()
+    }
+    else {
+      createdUser = await User.create({
       name,
       email,
-      password: passwordHash
+      password: passwordHash,
+      otp,
+      otpExpiresAt,
     })
+  }
+
+  await sendEmail(
+    email,
+    'Verify your email for Echo Dispatch',
+    `<h2>Your OTP code is: ${otp}</h2><p>This code will expire in 10 minutes.</p>`
+  )
+ 
+
+
+    
     const role = createdUser.role || 'user'
 
     return NextResponse.json(
