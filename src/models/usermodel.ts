@@ -1,16 +1,5 @@
 import mongoose from 'mongoose';
-
-export interface IUser extends mongoose.Document {
-	name: string;
-	email: string;
-	password?: string;
-	isEmailVerified?: boolean;
-    otp?: string;
-	otpExpiresAt: Date;
-	role: 'user' | 'admin'|'partner'
-	createdAt?: Date;
-	updatedAt?: Date;
-}
+import type { IUser } from '@/types/user';
 
 const UserSchema: mongoose.Schema<IUser> = new mongoose.Schema(
 	{

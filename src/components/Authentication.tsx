@@ -23,7 +23,6 @@ function Authentication({
   const [err, setErr] = useState("");
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const { data } = useSession();
-  console.log(data);
   const handleSignup = async () => {
     setLoading(true);
     try {
@@ -48,7 +47,6 @@ function Authentication({
         email,
         otp: otp.join(""),
       });
-      console.log(data);
       setStep("login");
       setLoading(false);
     } catch (error: any) {
@@ -312,7 +310,7 @@ function Authentication({
                       {err && <p className="text-red-500 text-sm">*{err}</p>}
 
                       <button
-                        className="mt-6 w-full h-11 rounded-xl bg-black text-white font-semibold hover:bg-gray-500 transition"
+                        className="mt-6 w-full h-11 flex justify-center items-center rounded-xl bg-black text-white font-semibold hover:bg-gray-500 transition"
                         onClick={handleVerifyEmail}
                       >
                         {!loading ? (
