@@ -33,7 +33,7 @@ function Nav() {
         initial={{ opacity: 0, y: -60 }}
         animate={{ opacity: 1, y: 0 }}
         className="fixed top-3 left-1/2 -translate-x-1/2 w-[94%]
-    md:w-[90%] z-50 rounded-full bg-white/10
+    md:w-[90%] z-50 rounded-full bg-black
     text-white shadow-[0_15px_50px_rgba(0,0,0,0.7)] py-3"
       >
         <div className="max-w-7xl mx-auto px-4 md:px-8 flex items-center justify-between">

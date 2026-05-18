@@ -1,9 +1,14 @@
 "use client";
+import { RootState } from "@/redux/store";
 import { Bike, Car, Trash, Truck } from "lucide-react";
 import { motion } from "motion/react";
-import React from "react";
+import { useRouter } from "next/navigation";
+import React, { use } from "react";
+import { useSelector } from "react-redux";
 
 function Herosection({ onAuthRequired }: { onAuthRequired: () => void }) {
+  const { userData } = useSelector((state: RootState) => state.user);
+  const router = useRouter();
   return (
     <div className="w-full relative min-h-screen overflow-hidden">
       <div
@@ -50,7 +55,9 @@ function Herosection({ onAuthRequired }: { onAuthRequired: () => void }) {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             className="px-10 py-4 bg-white text-black rounded-full font-semibold shadow-xl hover:bg-blue-700 transition-colors"
-            onClick={onAuthRequired}
+            onClick={() => {
+              !userData ? onAuthRequired() : router.push("/user/book");
+            }}
           >
             BOOK NOW
           </motion.button>
