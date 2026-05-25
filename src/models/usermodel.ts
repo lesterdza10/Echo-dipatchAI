@@ -10,8 +10,8 @@ const UserSchema: mongoose.Schema<IUser> = new mongoose.Schema(
 		isEmailVerified: { type: Boolean, default: false },
 		otp: { type: String, required: false },
 		otpExpiresAt: { type: Date, required: false },
-
-    },
+		partnerOnboardingSteps:{type: Number, min: 0, max: 8, default: 0}
+	},
 	{
 		timestamps: true,
 	}

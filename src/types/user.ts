@@ -4,9 +4,10 @@ export interface IUser {
 	email: string;
 	password?: string;
 	isEmailVerified?: boolean;
-    otp?: string;
+	otp?: string;
 	otpExpiresAt?: Date;
-	role: 'user' | 'admin'|'partner'
+	role: 'user' | 'admin' | 'partner'
 	createdAt?: Date;
 	updatedAt?: Date;
+	partnerOnboardingSteps?: number;
 }
