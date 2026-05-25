@@ -1,23 +1,24 @@
 "use client";
 import { setUserData } from "@/redux/userSlice";
-import axios from "axios";
-import React, { use, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
+import { useSession } from "next-auth/react";
 
 function useGetMe(enabled: boolean) {
   const dispatch = useDispatch();
+  const { data: session } = useSession();
+  const [mounted, setMounted] = useState(false);
+
   useEffect(() => {
-    if (!enabled) return;
-    const getMe = async () => {
-      try {
-        const { data } = await axios.get("/api/user/me");
-        dispatch(setUserData(data));
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-      }
-    };
-    getMe();
-  }, [enabled, dispatch]);
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!mounted || !enabled || !session?.user) return;
+
+    // Dispatch session user data to Redux
+    dispatch(setUserData(session.user));
+  }, [enabled, session, dispatch, mounted]);
 }
 
 export default useGetMe;

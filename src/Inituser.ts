@@ -1,5 +1,5 @@
 'use client'
-import React, { use } from 'react'
+import React from 'react'
 import { useSession } from 'next-auth/react'
 import useGetMe from './hooks/useGetMe';
 
