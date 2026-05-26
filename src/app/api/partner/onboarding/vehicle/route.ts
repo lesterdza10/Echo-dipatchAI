@@ -42,7 +42,7 @@ export async function POST(request: Request) {
 
 
 
-    let vehicle = await Vehicle.findOne({ owner: session.user.id });
+    let vehicle = await Vehicle.findOne({ owner: user._id });
     if (vehicle) {
       vehicle.type = type;
       vehicle.number = vehicle_number;
@@ -57,6 +57,7 @@ export async function POST(request: Request) {
       type,
       number: vehicle_number,
       vehicleModel,
+      owner: user._id,
     });
 
     if (!user?.partnerOnboardingSteps || user.partnerOnboardingSteps < 1) {
@@ -82,7 +83,7 @@ export async function GET(request: Request) {
     const session = await getServerSession();
     if (!session || !session.user?.email) {
       return new Response(JSON.stringify({ message: "Unauthorized" }), {
-        status: 400,
+        status: 401,
       });
     }
     const user = await User.findOne({ email: session.user.email });
@@ -91,7 +92,7 @@ export async function GET(request: Request) {
         status: 404,
       });
     }
-    let vehicle = await Vehicle.findOne({ owner: session.user.id });
+    let vehicle = await Vehicle.findOne({ owner: user._id });
     if (vehicle) {
       return new Response(JSON.stringify({ vehicle }), {
         status: 200,
@@ -99,7 +100,7 @@ export async function GET(request: Request) {
     }
   }
   catch (error) {
-    console.error(error);
+    console.log(error);
     return new Response(JSON.stringify({ message: "Internal server error" }), {
       status: 500,
     });

@@ -10,4 +10,6 @@ export interface IUser {
 	createdAt?: Date;
 	updatedAt?: Date;
 	partnerOnboardingSteps?: number;
+	mobileNumber?: string;
+
 }

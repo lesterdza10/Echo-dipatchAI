@@ -1,8 +1,44 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import { ArrowLeft, CarFront, Truck, Trash2, Van } from "lucide-react";
 import { useRouter } from "next/navigation";
+import axios from "axios";
+import { useSession } from "next-auth/react";
+
+// Configure axios to send credentials (cookies) with requests
+axios.defaults.withCredentials = true;
+
+// Add request interceptor to log headers
+axios.interceptors.request.use(
+  (config) => {
+    console.log("📤 Axios Request Interceptor:");
+    console.log("  - URL:", config.url);
+    console.log("  - withCredentials:", config.withCredentials);
+    console.log("  - Browser cookies:", document.cookie || "[NO COOKIES]");
+    console.log(
+      "  - Authorization header:",
+      config.headers.Authorization || "[NOT SET]",
+    );
+    return config;
+  },
+  (error) => {
+    console.error("Request error:", error);
+    return Promise.reject(error);
+  },
+);
+
+// Add response interceptor to log response
+axios.interceptors.response.use(
+  (response) => {
+    console.log("📥 Axios Response:", response.status);
+    return response;
+  },
+  (error) => {
+    console.error("Response error:", error.response?.status);
+    return Promise.reject(error);
+  },
+);
 
 const vehicleTypes = [
   {
@@ -36,6 +72,18 @@ function page() {
   const [selectedVehicle, setSelectedVehicle] = useState("");
   const [vehicleNumber, setVehicleNumber] = useState("");
   const [vehicleModel, setVehicleModel] = useState("");
+  const handdleVehicle = async () => {
+    try {
+      const { data } = await axios.post("/api/partner/onboarding/vehicle", {
+        type: selectedVehicle,
+        number: vehicleNumber,
+        vehicleModel: vehicleModel,
+      });
+      console.log(data);
+    } catch (error) {
+      console.error("Error saving vehicle details:", error);
+    }
+  };
   return (
     <div className="min-h-screen flex items-center justify-center px-4 bg-white">
       <motion.div
@@ -107,7 +155,7 @@ function page() {
               type="text"
               id="vn"
               value={vehicleNumber}
-              onChange={(e) => setVehicleNumber(e.target.value)}
+              onChange={(e) => setVehicleNumber(e.target.value.toUpperCase())}
               placeholder="ex: KA-01-AB-1234"
               className="mt-2 w-full border-b border-gray-300 pb-2 text-sm focus:outline-none focus:border-black transition"
             />
@@ -129,6 +177,7 @@ function page() {
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.96 }}
+          onClick={handdleVehicle}
           className="mt-8 w-full h-14 rounded-2xl bg-black text-white font-semibold items-center justify-center gap-2 disabled:opacity-40 transition flex"
         >
           Continue
