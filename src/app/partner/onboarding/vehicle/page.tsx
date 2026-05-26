@@ -6,40 +6,6 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 
-// Configure axios to send credentials (cookies) with requests
-axios.defaults.withCredentials = true;
-
-// Add request interceptor to log headers
-axios.interceptors.request.use(
-  (config) => {
-    console.log("📤 Axios Request Interceptor:");
-    console.log("  - URL:", config.url);
-    console.log("  - withCredentials:", config.withCredentials);
-    console.log("  - Browser cookies:", document.cookie || "[NO COOKIES]");
-    console.log(
-      "  - Authorization header:",
-      config.headers.Authorization || "[NOT SET]",
-    );
-    return config;
-  },
-  (error) => {
-    console.error("Request error:", error);
-    return Promise.reject(error);
-  },
-);
-
-// Add response interceptor to log response
-axios.interceptors.response.use(
-  (response) => {
-    console.log("📥 Axios Response:", response.status);
-    return response;
-  },
-  (error) => {
-    console.error("Response error:", error.response?.status);
-    return Promise.reject(error);
-  },
-);
-
 const vehicleTypes = [
   {
     id: "compactor",
@@ -72,7 +38,7 @@ function page() {
   const [selectedVehicle, setSelectedVehicle] = useState("");
   const [vehicleNumber, setVehicleNumber] = useState("");
   const [vehicleModel, setVehicleModel] = useState("");
-  const handdleVehicle = async () => {
+  const handleVehicle = async () => {
     try {
       const { data } = await axios.post("/api/partner/onboarding/vehicle", {
         type: selectedVehicle,
@@ -177,7 +143,7 @@ function page() {
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.96 }}
-          onClick={handdleVehicle}
+          onClick={handleVehicle}
           className="mt-8 w-full h-14 rounded-2xl bg-black text-white font-semibold items-center justify-center gap-2 disabled:opacity-40 transition flex"
         >
           Continue
