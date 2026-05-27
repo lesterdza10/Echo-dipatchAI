@@ -1,12 +1,10 @@
 "use client";
-import React from "react";
 import axios from "axios";
 import { useState } from "react";
 import { CircleDashed, Lock, Mail, User, X } from "lucide-react";
-import { AnimatePresence, motion, useSpring } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import Image from "next/image";
-import { signIn, useSession } from "next-auth/react";
-import { set } from "mongoose";
+import { signIn } from "next-auth/react";
 type stepType = "login" | "signup" | "otp";
 function Authentication({
   open,
@@ -22,7 +20,6 @@ function Authentication({
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState("");
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
-  const { data } = useSession();
   const handleSignup = async () => {
     setLoading(true);
     try {

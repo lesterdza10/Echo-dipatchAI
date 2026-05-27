@@ -4,7 +4,7 @@ import { useSession } from 'next-auth/react'
 import useGetMe from './hooks/useGetMe';
 
 function Inituser() {
-    const {status}=useSession()
+    const { status } = useSession()
     useGetMe(status == "authenticated")
     return null;
 }

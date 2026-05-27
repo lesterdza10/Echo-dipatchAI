@@ -1,19 +1,15 @@
 "use client";
 import { useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import Authentication from "./Authentication";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
-import { div } from "motion/react-client";
 import { Bike, Car, ChevronRight, LogOut, Menu, Truck, X } from "lucide-react";
 import { signOut } from "next-auth/react";
-import { set } from "mongoose";
 import { setUserData } from "@/redux/userSlice";
-import { useOnClickOutside } from "next/dist/next-devtools/dev-overlay/hooks/use-on-click-outside";
 const navItems = ["Home", "About", "Bookings", "Contact"];
 function Nav() {
   const dispatch = useDispatch<AppDispatch>();

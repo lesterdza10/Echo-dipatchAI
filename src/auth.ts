@@ -100,5 +100,5 @@ export const authOptions: NextAuthOptions = {
     maxAge: 30 * 24 * 60 * 60,
     strategy: "jwt",
   },
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: process.env.NEXTAUTH_SECRET || "your-secret-key-change-in-production",
 };

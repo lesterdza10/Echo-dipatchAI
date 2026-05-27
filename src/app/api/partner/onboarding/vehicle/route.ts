@@ -2,16 +2,16 @@ import { connectDB } from "@/lib/db";
 import { getServerSession } from "next-auth";
 import User from "@/models/usermodel";
 import Vehicle from "@/models/vehicle.model";
-
+import { authOptions } from "@/auth";
 
 const regex = /^[A-Z]{2}\d{2}[A-Z]{1,2}\d{4}$/i;
 export async function POST(request: Request) {
   try {
     await connectDB();
-    const session = await getServerSession();
+    const session = await getServerSession(authOptions) as any;
     if (!session || !session.user?.email) {
       return new Response(JSON.stringify({ message: "Unauthorized" }), {
-        status: 400,
+        status: 401,
       });
     }
     const user = await User.findOne({ email: session.user.email });
@@ -49,9 +49,12 @@ export async function POST(request: Request) {
       vehicle.vehicleModel = vehicleModel;
       vehicle.status = "pending";
       await vehicle.save();
-      return new Response(JSON.stringify({ message: "Vehicle updated successfully" }), {
-        status: 200,
-      });
+      return new Response(
+        JSON.stringify({ message: "Vehicle updated successfully", vehicle }),
+        {
+          status: 200,
+        },
+      );
     }
     vehicle = await Vehicle.create({
       type,
@@ -67,9 +70,12 @@ export async function POST(request: Request) {
     await user.save();
 
 
-    return new Response(JSON.stringify({ message: "Vehicle created successfully" }), {
-      status: 201,
-    });
+    return new Response(
+      JSON.stringify({ message: "Vehicle created successfully", vehicle }),
+      {
+        status: 201,
+      },
+    );
   } catch (error) {
     console.error(error);
     return new Response(JSON.stringify({ message: "Internal server error" }), {
@@ -80,7 +86,7 @@ export async function POST(request: Request) {
 export async function GET(request: Request) {
   try {
     await connectDB();
-    const session = await getServerSession();
+    const session = await getServerSession(authOptions);
     if (!session || !session.user?.email) {
       return new Response(JSON.stringify({ message: "Unauthorized" }), {
         status: 401,

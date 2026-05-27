@@ -1,9 +1,16 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion } from "motion/react";
-import { ArrowLeft, CarFront, Truck, Trash2, Van } from "lucide-react";
+import {
+  ArrowLeft,
+  CarFront,
+  Truck,
+  Trash2,
+  Van,
+  CircleDashed,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
-import axios from "axios";
+import axiosClient from "@/lib/axiosClient";
 import { useSession } from "next-auth/react";
 
 const vehicleTypes = [
@@ -35,21 +42,31 @@ const vehicleTypes = [
 
 function page() {
   const router = useRouter();
+  const { status } = useSession();
   const [selectedVehicle, setSelectedVehicle] = useState("");
   const [vehicleNumber, setVehicleNumber] = useState("");
   const [vehicleModel, setVehicleModel] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const handleVehicle = async () => {
+    setError("");
     try {
-      const { data } = await axios.post("/api/partner/onboarding/vehicle", {
-        type: selectedVehicle,
-        number: vehicleNumber,
-        vehicleModel: vehicleModel,
-      });
-      console.log(data);
-    } catch (error) {
-      console.error("Error saving vehicle details:", error);
+      setLoading(true);
+      const { data } = await axiosClient.post(
+        "/api/partner/onboarding/vehicle",
+        {
+          type: selectedVehicle,
+          number: vehicleNumber,
+          vehicleModel: vehicleModel,
+        },
+      );
+      setLoading(false);
+    } catch (error: any) {
+      setError(error?.response?.data?.message ?? "An error occurred");
+      setLoading(false);
     }
   };
+
   return (
     <div className="min-h-screen flex items-center justify-center px-4 bg-white">
       <motion.div
@@ -140,13 +157,19 @@ function page() {
             />
           </div>
         </div>
+        {error && <p className="text-red-500 text-sm mt-2">*{error}</p>}
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.96 }}
           onClick={handleVehicle}
+          disabled={loading}
           className="mt-8 w-full h-14 rounded-2xl bg-black text-white font-semibold items-center justify-center gap-2 disabled:opacity-40 transition flex"
         >
-          Continue
+          {loading ? (
+            <CircleDashed className="text-white animate-spin" />
+          ) : (
+            "Continue"
+          )}
         </motion.button>
       </motion.div>
     </div>

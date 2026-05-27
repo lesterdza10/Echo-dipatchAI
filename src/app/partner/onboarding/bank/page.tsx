@@ -2,17 +2,48 @@
 import React from "react";
 import { motion } from "motion/react";
 import { useRouter } from "next/navigation";
+import axiosClient from "@/lib/axiosClient";
 import {
   ArrowLeft,
-  BadgeCheck,
+  CircleDashed,
   CheckCircle,
   CreditCard,
   Landmark,
+  BadgeCheck,
   Phone,
 } from "lucide-react";
 
 function page() {
   const router = useRouter();
+  const [accountHolderName, setAccountHolderName] = React.useState("");
+  const [accountNumber, setAccountNumber] = React.useState("");
+  const [ifscCode, setIfscCode] = React.useState("");
+  const [upi, setUpi] = React.useState("");
+  const [mobileNumber, setMobileNumber] = React.useState("");
+  const [loading, setLoading] = React.useState(false);
+  const [error, setError] = React.useState("");
+
+  const handleBank = async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const { data } = await axiosClient.post("/api/partner/onboarding/bank", {
+        accountHolderName,
+        accountNumber,
+        ifscCode,
+        upi,
+        mobileNumber,
+      });
+      setLoading(false);
+    } catch (error: any) {
+      setError(
+        error.response?.data?.message ||
+          "Failed to save bank details. Please try again.",
+      );
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center px-4 bg-white">
       <motion.div
@@ -50,6 +81,8 @@ function page() {
                 type="text"
                 placeholder="Enter account holder name"
                 className="flex-1 border-b pb-2 text-sm focus:outline-none border-gray-300 focus:border-black"
+                value={accountHolderName}
+                onChange={(e) => setAccountHolderName(e.target.value)}
               />
             </div>
           </div>
@@ -70,6 +103,8 @@ function page() {
                 type="text"
                 placeholder="Enter bank account number"
                 className="flex-1 border-b pb-2 text-sm focus:outline-none border-gray-300 focus:border-black"
+                value={accountNumber}
+                onChange={(e) => setAccountNumber(e.target.value)}
               />
             </div>
           </div>
@@ -89,6 +124,8 @@ function page() {
                 type="text"
                 placeholder="Enter IFSC code"
                 className="flex-1 border-b pb-2 text-sm focus:outline-none border-gray-300 focus:border-black"
+                value={ifscCode}
+                onChange={(e) => setIfscCode(e.target.value)}
               />
             </div>
           </div>
@@ -105,6 +142,8 @@ function page() {
                 type="text"
                 placeholder="Enter mobile number"
                 className="flex-1 border-b pb-2 text-sm focus:outline-none border-gray-300 focus:border-black"
+                value={mobileNumber}
+                onChange={(e) => setMobileNumber(e.target.value)}
               />
             </div>
           </div>
@@ -121,6 +160,8 @@ function page() {
                 type="text"
                 placeholder="Enter UPI ID"
                 className="flex-1 border-b pb-2 text-sm focus:outline-none border-gray-300 focus:border-black"
+                value={upi}
+                onChange={(e) => setUpi(e.target.value)}
               />
             </div>
           </div>
@@ -132,12 +173,18 @@ function page() {
             takes 1-2 business days.
           </p>
         </div>
+        {error && <div className="mt-4 text-sm text-red-500">*{error}</div>}
         <motion.button
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
+          onClick={handleBank}
           className="mt-8 w-full h-14 bg-black text-white font-semibold rounded-2xl flex items-center justify-center gap-2 disabled:opacity-40 transition"
         >
-          Continue
+          {loading ? (
+            <CircleDashed className="text-white animate-spin" />
+          ) : (
+            "Continue"
+          )}
         </motion.button>
       </motion.div>
     </div>

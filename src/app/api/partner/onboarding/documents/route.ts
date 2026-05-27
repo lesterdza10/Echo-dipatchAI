@@ -3,14 +3,15 @@ import { connectDB } from "@/lib/db";
 import PartnerDocs from "@/models/PartnerDocs.models";
 import User from "@/models/usermodel";
 import { getServerSession } from "next-auth";
+import { authOptions } from "@/auth";
 
 export async function POST(request: Request) {
     try {
         await connectDB();
-        const session = await getServerSession();
+        const session = await getServerSession(authOptions);
         if (!session || !session.user?.email) {
             return new Response(JSON.stringify({ message: "Unauthorized" }), {
-                status: 400,
+                status: 401,
             });
         }
         const user = await User.findOne({ email: session.user.email });

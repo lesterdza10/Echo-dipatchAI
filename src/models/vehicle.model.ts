@@ -1,5 +1,9 @@
 import mongoose from "mongoose";
-type vehicleType = "bike" | "car" | "van" | "truck" | "loading" | "Jeep";
+type vehicleType =
+  | "compactor"
+  | "pickup"
+  | "mini-truck"
+  | "dump-truck";
 interface IVehicle {
   owner: mongoose.Types.ObjectId;
   type: vehicleType;
@@ -24,7 +28,7 @@ const vehicleSchema = new mongoose.Schema<IVehicle>(
     },
     type: {
       type: String,
-      enum: ["bike", "car", "van", "truck", "loading", "Jeep"],
+      enum: ["compactor", "pickup", "mini-truck", "dump-truck"],
       required: true,
     },
     vehicleModel: { type: String, required: true },
