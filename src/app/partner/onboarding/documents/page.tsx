@@ -14,6 +14,7 @@ function page() {
   });
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState("");
+
   const handleDocs = async () => {
     setLoading(true);
     setError("");
@@ -47,6 +48,7 @@ function page() {
       [d]: file,
     }));
   };
+  const canSubmit = docs.aadhar && docs.license && docs.rc;
   return (
     <div className="min-h-screen flex items-center justify-center px-4 bg-white">
       <motion.div
@@ -77,12 +79,20 @@ function page() {
               <p className="font-semibold,text-sm">Aadhar/ID Proof</p>
               <p className="text-xs text-gray-500">Government issued ID</p>
             </div>
-            <div>
-              <span className="text-xs text-gray-400">Upload</span>
-              <div className="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center">
-                <UploadCloud size={18} />
+
+            {docs.aadhar ? (
+              <span className=" text-xs text-green-600 font-medium">
+                Uploaded
+              </span>
+            ) : (
+              <div>
+                <span className="text-xs text-gray-400">Upload</span>
+                <div className="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center">
+                  <UploadCloud size={18} />
+                </div>
               </div>
-            </div>
+            )}
+
             <input
               type="file"
               hidden
@@ -97,15 +107,21 @@ function page() {
             className="flex items-center justify-between p-4 rounded-2xl border border-gray-200 cursor-pointer hover:border-black transition"
           >
             <div>
-              <p className="font-semibold,text-sm">Driving License</p>
+              <p className="font-semibold text-sm">Driving License</p>
               <p className="text-xs text-gray-500">valid Driving license</p>
             </div>
-            <div>
-              <span className="text-xs text-gray-400">Upload</span>
-              <div className="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center">
-                <UploadCloud size={18} />
+            {docs.license ? (
+              <span className=" text-xs text-green-600 font-medium">
+                Uploaded
+              </span>
+            ) : (
+              <div>
+                <span className="text-xs text-gray-400">Upload</span>
+                <div className="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center">
+                  <UploadCloud size={18} />
+                </div>
               </div>
-            </div>
+            )}
             <input
               type="file"
               hidden
@@ -120,15 +136,21 @@ function page() {
             className="flex items-center justify-between p-4 rounded-2xl border border-gray-200 cursor-pointer hover:border-black transition"
           >
             <div>
-              <p className="font-semibold,text-sm">Vehicle Registration</p>
+              <p className="font-semibold text-sm">Vehicle Registration</p>
               <p className="text-xs text-gray-500">Registration Certificate</p>
             </div>
-            <div>
-              <span className="text-xs text-gray-400">Upload</span>
-              <div className="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center">
-                <UploadCloud size={18} />
+            {docs.rc ? (
+              <span className=" text-xs text-green-600 font-medium">
+                Uploaded
+              </span>
+            ) : (
+              <div>
+                <span className="text-xs text-gray-400">Upload</span>
+                <div className="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center">
+                  <UploadCloud size={18} />
+                </div>
               </div>
-            </div>
+            )}
             <input
               type="file"
               hidden
@@ -145,7 +167,7 @@ function page() {
         <motion.button
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          disabled={loading}
+          disabled={loading || !canSubmit}
           className="mt-8 w-full h-14 bg-black text-white font-semibold rounded-2xl flex items-center justify-center gap-2 disabled:opacity-40 transition"
           onClick={handleDocs}
         >

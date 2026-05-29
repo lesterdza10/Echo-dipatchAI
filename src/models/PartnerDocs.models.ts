@@ -1,11 +1,11 @@
 import mongoose from "mongoose";
-interface IPartnerDocs{
+interface IPartnerDocs {
     owner: mongoose.Types.ObjectId;
-    status:"approved"|"pending"|"rejected"
+    status: "approved" | "pending" | "rejected"
     aadharUrl: string;
     rcUrl: string;
     licenceUrl: string;
-    rejectionReason?:string;
+    rejectionReason?: string;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -16,6 +16,6 @@ const PartnerDocsSchema = new mongoose.Schema<IPartnerDocs>({
     aadharUrl: { type: String, required: true },
     rcUrl: { type: String, required: true },
     licenceUrl: { type: String, required: true },
-},{timestamps:true})
-const PartnerDocs=mongoose.models.PartnerDocs || mongoose.model<IPartnerDocs>("PartnerDocs",PartnerDocsSchema);
+}, { timestamps: true })
+const PartnerDocs = mongoose.models.PartnerDocs || mongoose.model<IPartnerDocs>("PartnerDocs", PartnerDocsSchema);
 export default PartnerDocs

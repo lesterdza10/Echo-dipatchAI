@@ -63,7 +63,7 @@ export async function GET(request: Request) {
         }
         const partnerBank = await PartnerBank.findOne({ owner: user._id });
         if (partnerBank) {
-            return new Response(JSON.stringify({ partnerBank }), {
+            return new Response(JSON.stringify({ mobileNumber: user.mobileNumber, partnerBank }), {
                 status: 200,
             });
 

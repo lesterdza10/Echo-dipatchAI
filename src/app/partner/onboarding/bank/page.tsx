@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import { motion } from "motion/react";
 import { useRouter } from "next/navigation";
 import axiosClient from "@/lib/axiosClient";
@@ -12,6 +12,7 @@ import {
   BadgeCheck,
   Phone,
 } from "lucide-react";
+const IFSC_REGEX = /^[A-Z]{4}0[A-Z0-9]{6}$/;
 
 function page() {
   const router = useRouter();
@@ -23,6 +24,14 @@ function page() {
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState("");
 
+  const sanitizedIfsc = ifscCode.trim().toUpperCase();
+  const isAccountNumberValid = accountNumber.trim().length >= 9;
+  const isNameValid = accountHolderName.trim().length >= 3;
+  const isIfscValid = IFSC_REGEX.test(sanitizedIfsc);
+  const isMobileValid = mobileNumber.trim().length == 10;
+  const CanSubmit =
+    isNameValid && isIfscValid && isMobileValid && isAccountNumberValid;
+
   const handleBank = async () => {
     setLoading(true);
     setError("");
@@ -30,7 +39,7 @@ function page() {
       const { data } = await axiosClient.post("/api/partner/onboarding/bank", {
         accountHolderName,
         accountNumber,
-        ifscCode,
+        ifscCode: sanitizedIfsc,
         upi,
         mobileNumber,
       });
@@ -43,6 +52,21 @@ function page() {
       setLoading(false);
     }
   };
+  useEffect(() => {
+    const handleGetBank = async () => {
+      try {
+        const { data } = await axiosClient.get("/api/partner/onboarding/bank");
+        setAccountHolderName(data.partnerBank?.accountHolderName || "");
+        setAccountNumber(data.partnerBank?.accountNumber || "");
+        setIfscCode(data.partnerBank?.ifscCode || "");
+        setUpi(data.partnerBank?.upi || "");
+        setMobileNumber(data.mobileNumber || "");
+      } catch (error: any) {
+        console.log(error);
+      }
+    };
+    handleGetBank();
+  }, []);
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 bg-white">
@@ -80,11 +104,18 @@ function page() {
                 id="ahn"
                 type="text"
                 placeholder="Enter account holder name"
-                className="flex-1 border-b pb-2 text-sm focus:outline-none border-gray-300 focus:border-black"
+                className={`flex-1 border-b pb-2 text-sm focus:outline-none
+                  ${!isNameValid && accountHolderName.length > 0 ? "border-red-400 focus:border-red-500" : "border-gray-300 focus:border-black"}
+         `}
                 value={accountHolderName}
                 onChange={(e) => setAccountHolderName(e.target.value)}
               />
             </div>
+            {!isNameValid && accountHolderName.length > 0 && (
+              <p className="mt-1 text-xs text-red-500">
+                Enter valid account holder name
+              </p>
+            )}
           </div>
 
           <div>
@@ -102,11 +133,18 @@ function page() {
                 id="ban"
                 type="text"
                 placeholder="Enter bank account number"
-                className="flex-1 border-b pb-2 text-sm focus:outline-none border-gray-300 focus:border-black"
+                className={`flex-1 border-b pb-2 text-sm focus:outline-none
+                  ${!isAccountNumberValid && accountNumber.length > 0 ? "border-red-400 focus:border-red-500" : "border-gray-300 focus:border-black"}
+         `}
                 value={accountNumber}
                 onChange={(e) => setAccountNumber(e.target.value)}
               />
             </div>
+            {!isAccountNumberValid && accountNumber.length > 0 && (
+              <p className="mt-1 text-xs text-red-500">
+                Enter valid bank account number
+              </p>
+            )}
           </div>
           <div>
             <label
@@ -123,11 +161,16 @@ function page() {
                 id="ifsc"
                 type="text"
                 placeholder="Enter IFSC code"
-                className="flex-1 border-b pb-2 text-sm focus:outline-none border-gray-300 focus:border-black"
-                value={ifscCode}
+                className={`flex-1 border-b pb-2 text-sm focus:outline-none
+                  ${!isIfscValid && ifscCode.length > 0 ? "border-red-400 focus:border-red-500" : "border-gray-300 focus:border-black"}
+         `}
+                value={ifscCode.toUpperCase()}
                 onChange={(e) => setIfscCode(e.target.value)}
               />
             </div>
+            {!isIfscValid && ifscCode.length > 0 && (
+              <p className="mt-1 text-xs text-red-500">Enter valid IFSC code</p>
+            )}
           </div>
           <div>
             <label htmlFor="mn" className="text-xs font-semibold text-gray-500">
@@ -141,11 +184,18 @@ function page() {
                 id="mn"
                 type="text"
                 placeholder="Enter mobile number"
-                className="flex-1 border-b pb-2 text-sm focus:outline-none border-gray-300 focus:border-black"
+                className={`flex-1 border-b pb-2 text-sm focus:outline-none
+                  ${!isMobileValid && mobileNumber.length > 0 ? "border-red-400 focus:border-red-500" : "border-gray-300 focus:border-black"}
+         `}
                 value={mobileNumber}
                 onChange={(e) => setMobileNumber(e.target.value)}
               />
             </div>
+            {!isMobileValid && mobileNumber.length > 0 && (
+              <p className="mt-1 text-xs text-red-500">
+                Enter valid mobile number
+              </p>
+            )}
           </div>
           <div>
             <label
@@ -178,6 +228,7 @@ function page() {
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           onClick={handleBank}
+          disabled={!CanSubmit || loading}
           className="mt-8 w-full h-14 bg-black text-white font-semibold rounded-2xl flex items-center justify-center gap-2 disabled:opacity-40 transition"
         >
           {loading ? (

@@ -62,6 +62,7 @@ export const authOptions: NextAuthOptions = {
             name: user.name as string,
             email: user.email as string,
             password: "",
+            partnerStatus: "pending",
           });
           existingUser = newUser;
         }

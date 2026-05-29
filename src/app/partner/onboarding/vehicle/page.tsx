@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "motion/react";
 import {
   ArrowLeft,
@@ -66,6 +66,22 @@ function page() {
       setLoading(false);
     }
   };
+  useEffect(() => {
+    const handlegetVehicle = async () => {
+      try {
+        const { data } = await axiosClient.get(
+          "/api/partner/onboarding/vehicle",
+        );
+        const vehicle = data?.vehicle;
+        setSelectedVehicle(vehicle?.type ?? "");
+        setVehicleNumber(vehicle?.number ?? "");
+        setVehicleModel(vehicle?.vehicleModel ?? "");
+      } catch (error: any) {
+        console.log(error);
+      }
+    };
+    handlegetVehicle();
+  }, []);
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 bg-white">

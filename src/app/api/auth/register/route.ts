@@ -42,30 +42,31 @@ export async function POST(req: Request) {
     let createdUser
     if (existing && !existing.isEmailVerified) {
       existing.name = name,
-      existing.password = passwordHash,
-      existing.otp = otp,
-      existing.otpExpiresAt = otpExpiresAt,
-      createdUser = await existing.save()
+        existing.password = passwordHash,
+        existing.otp = otp,
+        existing.otpExpiresAt = otpExpiresAt,
+        createdUser = await existing.save()
     }
     else {
       createdUser = await User.create({
-      name,
+        name,
+        email,
+        password: passwordHash,
+        otp,
+        otpExpiresAt,
+        partnerStatus: "pending",
+      })
+    }
+
+    await sendEmail(
       email,
-      password: passwordHash,
-      otp,
-      otpExpiresAt,
-    })
-  }
-
-  await sendEmail(
-    email,
-    'Verify your email for Echo Dispatch',
-    `<h2>Your OTP code is: ${otp}</h2><p>This code will expire in 10 minutes.</p>`
-  )
- 
+      'Verify your email for Echo Dispatch',
+      `<h2>Your OTP code is: ${otp}</h2><p>This code will expire in 10 minutes.</p>`
+    )
 
 
-    
+
+
     const role = createdUser.role || 'user'
 
     return NextResponse.json(
