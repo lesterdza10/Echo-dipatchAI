@@ -10,7 +10,7 @@ const KPI_CONFIG: Record<
     iconBg: "bg-purple-50",
     iconColor: "text-purple-700",
     carddHover: "hover:border-purple-300 hover:shadow-purple-100",
-    glow: "from-purple-200/40 to-transparent",
+    glow: "from-purple-300/70  to-transparent",
   },
   Approved: {
     iconBg: "bg-emerald-100",
@@ -50,7 +50,7 @@ function KeyPi({ label, value, icon, variants }: KeyPiProps) {
         shadow-[0_10px_30px_rgba(0,0,0,0.06)] cursor-default group ${cfg.carddHover}`}
     >
       <div
-        className={`absolute inset-0 bg-gradient-to-br ${cfg.glow} opacity-0 group-hover:opacity-100 transition-opacity`}
+        className={`absolute inset-0 bg-linear-to-br ${cfg.glow} opacity-0 group-hover:opacity-100 transition-opacity`}
       />
       <div className="relative flex items-center justify-between">
         <div>
