@@ -41,6 +41,7 @@ function ContentList({ data, type }: any) {
 
         return (
           <motion.div
+            key={item._id ?? item.id ?? item.email ?? `${type}-${index}`}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.5 }}

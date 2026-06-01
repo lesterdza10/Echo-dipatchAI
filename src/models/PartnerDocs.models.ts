@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-interface IPartnerDocs {
+export interface IPartnerDocs {
     owner: mongoose.Types.ObjectId;
     status: "approved" | "pending" | "rejected"
     aadharUrl: string;

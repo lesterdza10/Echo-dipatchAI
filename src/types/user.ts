@@ -12,5 +12,6 @@ export interface IUser {
 	partnerOnboardingSteps?: number;
 	mobileNumber?: string;
 	partnerStatus?: "approved" | "pending" | "rejected";
+	rejectionReason?: string;
 
 }

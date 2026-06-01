@@ -4,7 +4,7 @@ type vehicleType =
   | "pickup"
   | "mini-truck"
   | "dump-truck";
-interface IVehicle {
+export interface IVehicle {
   owner: mongoose.Types.ObjectId;
   type: vehicleType;
   vehicleModel: string;

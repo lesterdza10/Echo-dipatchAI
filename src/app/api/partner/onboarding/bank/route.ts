@@ -31,9 +31,10 @@ export async function POST(request: Request) {
             { new: true, upsert: true }
         );
         user.mobileNumber = mobileNumber;
-        if (!user?.partnerOnboardingSteps || user.partnerOnboardingSteps < 3) {
-            user.partnerOnboardingSteps = 3;
-        }
+
+        user.partnerOnboardingSteps = 3;
+
+        user.partnerStatus = "pending";
         await user.save();
         return new Response(JSON.stringify({ message: "Bank details saved successfully", partnerBank }), {
             status: 200,

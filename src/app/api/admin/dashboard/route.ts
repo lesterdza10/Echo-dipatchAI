@@ -17,7 +17,7 @@ export async function GET(req: Request) {
         const TotalApproved = await User.countDocuments({ role: "partner", partnerStatus: "approved" });
         const TotalPending = await User.countDocuments({ role: "partner", partnerStatus: "pending" });
         const TotalRejected = await User.countDocuments({ role: "partner", partnerStatus: "rejected" });
-        const PendingPartnerUsers = await User.find({ role: "partner", partnerStatus: "pending", partnerOnboardingSteps: 3 })
+        const PendingPartnerUsers = await User.find({ role: "partner", partnerStatus: "pending", partnerOnboardingSteps: { $gte: 3 } });
 
         const partnerId = PendingPartnerUsers.map((p) => p._id)
         const PartnerVehicles = await Vehicle.find({

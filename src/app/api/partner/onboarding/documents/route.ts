@@ -66,7 +66,10 @@ export async function POST(request: Request) {
         )
         if (!user.partnerOnboardingSteps || user.partnerOnboardingSteps < 2) {
             user.partnerOnboardingSteps = 2;
+        }else{
+            user.partnerOnboardingSteps = 3;
         }
+        user.partnerStatus = "pending";
         await user.save();
         return new Response(JSON.stringify(partnerDocs), { status: 201 });
 

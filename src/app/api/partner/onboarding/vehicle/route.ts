@@ -43,7 +43,17 @@ export async function POST(request: Request) {
       vehicle.number = vehicle_number;
       vehicle.vehicleModel = vehicleModel;
       vehicle.status = "pending";
+      if (!user.partnerOnboardingSteps || user.partnerOnboardingSteps < 2) {
+        user.partnerOnboardingSteps = 2;
+        user.partnerStatus = "pending";
+        await user.save();
+      } else {
+        user.partnerOnboardingSteps = 3;
+        user.partnerStatus = "pending";
+        await user.save();
+      }
       await vehicle.save();
+
       return new Response(
         JSON.stringify({ message: "Vehicle updated successfully", vehicle }),
         {
@@ -67,7 +77,9 @@ export async function POST(request: Request) {
     if (!user?.partnerOnboardingSteps || user.partnerOnboardingSteps < 1) {
       user.partnerOnboardingSteps = 1;
     }
+
     user.role = "partner";
+    user.partnerStatus = "pending";
     await user.save();
 
 

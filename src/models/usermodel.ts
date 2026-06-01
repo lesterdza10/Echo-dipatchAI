@@ -13,6 +13,7 @@ const UserSchema: mongoose.Schema<IUser> = new mongoose.Schema(
 		partnerOnboardingSteps: { type: Number, min: 0, max: 8, default: 0 },
 		mobileNumber: { type: String },
 		partnerStatus: { type: String, enum: ['approved', 'pending', 'rejected'], default: 'pending' },
+		rejectionReason: { type: String },
 	},
 	{
 		timestamps: true,
