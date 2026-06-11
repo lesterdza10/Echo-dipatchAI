@@ -3,9 +3,20 @@ import React from "react";
 import { motion } from "motion/react";
 import { ArrowRight, CheckCircle2, User } from "lucide-react";
 import { useRouter } from "next/navigation";
+import axiosClient from "@/lib/axiosClient";
 
 function ContentList({ data, type }: any) {
   const router = useRouter();
+
+  const handleStartVideoKyc = async (id: any) => {
+    try {
+      const result = await axiosClient.get(`/api/admin/video-kyc/start/${id}`);
+      window.location.reload();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   if (data?.length === 0) {
     return (
       <motion.div
@@ -63,18 +74,42 @@ function ContentList({ data, type }: any) {
               </div>
             </div>
             <div className="shrink-0">
-              <motion.button
-                whileTap={{ scale: 0.97 }}
-                onClick={() =>
-                  type == "partner"
-                    ? router.push(`/admin/reviews/partner/${item._id}`)
-                    : router.push(`/admin/reviews/vehicle/${item._id}`)
-                }
-                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-neutral-950
+              {type === "kyc" ? (
+                item.videoKycStatus === "pending" ? (
+                  <motion.button
+                    onClick={() => handleStartVideoKyc(item._id)}
+                    whileTap={{ scale: 0.97 }}
+                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-neutral-950
                 hover:bg-neutral-800 text-white text-sm font-semibold transition-colors"
-              >
-                Review <ArrowRight size={16} />
-              </motion.button>
+                  >
+                    Start video KYC <ArrowRight size={16} />
+                  </motion.button>
+                ) : item.videoKycStatus === "in_progress" ? (
+                  <motion.button
+                    whileTap={{ scale: 0.97 }}
+                    onClick={() =>
+                      router.push(`/video-kyc/${item.videoKycRoomId}`)
+                    }
+                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-neutral-950
+                hover:bg-neutral-800 text-white text-sm font-semibold transition-colors"
+                  >
+                    Join Call <ArrowRight size={16} />
+                  </motion.button>
+                ) : null
+              ) : (
+                <motion.button
+                  whileTap={{ scale: 0.97 }}
+                  onClick={() =>
+                    type == "partner"
+                      ? router.push(`/admin/reviews/partner/${item._id}`)
+                      : router.push(`/admin/reviews/vehicle/${item._id}`)
+                  }
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl bg-neutral-950
+                hover:bg-neutral-800 text-white text-sm font-semibold transition-colors"
+                >
+                  Review <ArrowRight size={16} />
+                </motion.button>
+              )}
             </div>
           </motion.div>
         );

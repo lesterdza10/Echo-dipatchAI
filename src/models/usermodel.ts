@@ -14,6 +14,9 @@ const UserSchema: mongoose.Schema<IUser> = new mongoose.Schema(
 		mobileNumber: { type: String },
 		partnerStatus: { type: String, enum: ['approved', 'pending', 'rejected'], default: 'pending' },
 		rejectionReason: { type: String },
+		videoKycStatus: { type: String, enum: ["not_required", "pending", "approved", "rejected", "in_progress"], default: "not_required" },
+		videoKycRoomId: { type: String },
+		videoKycRejectionReason: { type: String },
 	},
 	{
 		timestamps: true,

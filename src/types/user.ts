@@ -1,3 +1,4 @@
+type VideoKycStatus = "not_required" | "pending" | "approved" | "rejected" | "in_progress";
 export interface IUser {
 	_id?: string;
 	name: string;
@@ -13,5 +14,8 @@ export interface IUser {
 	mobileNumber?: string;
 	partnerStatus?: "approved" | "pending" | "rejected";
 	rejectionReason?: string;
+	videoKycStatus: VideoKycStatus;
+	videoKycRoomId: string;
+	videoKycRejectionReason?: string;
 
 }

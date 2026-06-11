@@ -66,10 +66,14 @@ export async function POST(request: Request) {
         )
         if (!user.partnerOnboardingSteps || user.partnerOnboardingSteps < 2) {
             user.partnerOnboardingSteps = 2;
-        }else{
+        } else {
             user.partnerOnboardingSteps = 3;
         }
         user.partnerStatus = "pending";
+        user.rejectionReason = undefined;
+        user.videoKycStatus = "pending";
+        user.videoKycRejectionReason = undefined;
+        user.videoKycRoomId = "";
         await user.save();
         return new Response(JSON.stringify(partnerDocs), { status: 201 });
 

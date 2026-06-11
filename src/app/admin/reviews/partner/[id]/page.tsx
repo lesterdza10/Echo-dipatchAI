@@ -286,7 +286,7 @@ function page() {
                   placeholder="Enter reason for rejection(required)"
                   value={rejectionReason}
                   onChange={(e) => setRejectionReason(e.target.value)}
-                  className="w-full p-2 border rounded-xl p-3 text-sm"
+                  className="w-full border rounded-xl p-3 text-sm"
                 />
               </p>
               <div className="mt-6 flex gap-3">

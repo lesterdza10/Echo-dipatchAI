@@ -3,8 +3,12 @@ import { RootState } from "@/redux/store";
 import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { motion } from "motion/react";
-import { Check, Lock } from "lucide-react";
+import { Check, Clock, Lock, Video, CheckCircle2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import RejectionCard from "./RejectionCard";
+import StatusCard from "./StatusCard";
+import ActionCard from "./ActionCard";
+import axiosClient from "@/lib/axiosClient";
 
 type step = {
   id: number;
@@ -28,6 +32,7 @@ function PartnerDashboard() {
   const [activeStep, setActiveStep] = React.useState(0);
   const { userData } = useSelector((state: RootState) => state.user);
   const router = useRouter();
+  const [requestLoading, setRequestLoading] = React.useState(false);
 
   useEffect(() => {
     if (userData) {
@@ -97,6 +102,60 @@ function PartnerDashboard() {
             </div>
           </div>
         </div>
+
+        {activeStep == 4 && userData?.partnerStatus === "rejected" && (
+          <RejectionCard
+            title="Your application has been rejected"
+            reason={userData.rejectionReason}
+            actionLabel={`Review and Resubmit`}
+            onAction={() => router.push("/partner/onboarding/vehicle")}
+          />
+        )}
+        {activeStep == 4 && userData?.partnerStatus === "pending" && (
+          <StatusCard
+            icon={<Clock size={18} />}
+            title={"Document under review"}
+            description={"Admin is reviewing your application."}
+          />
+        )}
+
+        {activeStep == 5 &&
+          (userData?.videoKycStatus === "approved" ? (
+            <StatusCard
+              icon={<CheckCircle2 size={18} />}
+              title={"Video KYC Approved"}
+              description={"You can now proceed to pricing."}
+            />
+          ) : userData?.videoKycStatus === "rejected" ? (
+            <RejectionCard
+              title="Video KYC Rejected"
+              reason={userData?.videoKycRejectionReason}
+              actionLabel={
+                requestLoading ? "Sending Request..." : "Request Again"
+              }
+              onAction={async () => {
+                setRequestLoading(true);
+                await axiosClient.get("/api/partner/video-kyc/request");
+                setRequestLoading(false);
+              }}
+            />
+          ) : userData?.videoKycStatus === "in_progress" &&
+            userData?.videoKycRoomId ? (
+            <ActionCard
+              icon={<Video size={18} />}
+              title={"Admin started video KYC"}
+              button={"Join Call"}
+              onClick={() =>
+                router.push(`/video-kyc/${userData.videoKycRoomId}`)
+              }
+            />
+          ) : (
+            <StatusCard
+              icon={<Clock size={18} />}
+              title="waiting for admin to start video KYC"
+              description="Admin will start the video KYC process soon. Please wait."
+            />
+          ))}
       </div>
     </div>
   );

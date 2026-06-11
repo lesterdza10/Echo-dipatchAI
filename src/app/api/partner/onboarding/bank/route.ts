@@ -35,6 +35,10 @@ export async function POST(request: Request) {
         user.partnerOnboardingSteps = 3;
 
         user.partnerStatus = "pending";
+        user.rejectionReason = undefined;
+        user.videoKycStatus = "pending";
+        user.videoKycRejectionReason = undefined;
+        user.videoKycRoomId = "";
         await user.save();
         return new Response(JSON.stringify({ message: "Bank details saved successfully", partnerBank }), {
             status: 200,

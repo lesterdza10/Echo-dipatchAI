@@ -40,8 +40,17 @@ function AdminDashboard() {
       console.log(error);
     }
   };
+  const handleGetPendingKyc = async () => {
+    try {
+      const { data } = await axiosClient.get("/api/admin/video-kyc/pending");
+      setPendingKycReviews(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   useEffect(() => {
     handleGetData();
+    handleGetPendingKyc();
   }, []);
   return (
     <div className="min-h-screen bg-linear-to-br from-gray-100 to-gray-200">
