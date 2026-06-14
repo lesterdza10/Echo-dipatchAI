@@ -14,39 +14,61 @@ export async function GET(req: Request) {
             });
         }
         const TotalPartners = await User.countDocuments({ role: "partner" });
-        const TotalApproved = await User.countDocuments({ role: "partner", partnerStatus: "approved" });
-        const TotalPending = await User.countDocuments({ role: "partner", partnerStatus: "pending" });
-        const TotalRejected = await User.countDocuments({ role: "partner", partnerStatus: "rejected" });
-        const PendingPartnerUsers = await User.find({ role: "partner", partnerStatus: "pending", partnerOnboardingSteps: { $gte: 3 } });
+        const TotalApproved = await User.countDocuments({
+            role: "partner",
+            partnerStatus: "approved",
+        });
+        const TotalPending = await User.countDocuments({
+            role: "partner",
+            partnerStatus: "pending",
+        });
+        const TotalRejected = await User.countDocuments({
+            role: "partner",
+            partnerStatus: "rejected",
+        });
+        const PendingPartnerUsers = await User.find({
+            role: "partner",
+            partnerStatus: "pending",
+            partnerOnboardingSteps: { $gte: 3 },
+        });
 
-        const partnerId = PendingPartnerUsers.map((p) => p._id)
+        const partnerId = PendingPartnerUsers.map((p) => p._id);
         const PartnerVehicles = await Vehicle.find({
             owner: { $in: partnerId },
-        })
+        });
         const vehicleTypeMap = new Map(
-            PartnerVehicles.map((v) => [String(v.owner), v.type])
-        )
+            PartnerVehicles.map((v) => [String(v.owner), v.type]),
+        );
         const PendingPartnersReviews = PendingPartnerUsers.map((p) => ({
             _id: p._id,
             name: p.name,
             email: p.email,
             vehicleType: vehicleTypeMap.get(String(p._id)),
-        }))
-        return Response.json({
-            stats: {
-                TotalPartners,
-                TotalApproved,
-                TotalPending,
-                TotalRejected
+        }));
+
+        const pendingVehicles = await Vehicle.find({
+            status: "pending",
+            baseFare: { $exists: true },
+
+        }).populate("owner");
+
+        return Response.json(
+            {
+                pendingVehicles,
+                stats: {
+                    TotalPartners,
+                    TotalApproved,
+                    TotalPending,
+                    TotalRejected,
+                },
+                PendingPartnersReviews,
             },
-            PendingPartnersReviews,
-        }, { status: 200 })
-
-
+            { status: 200 },
+        );
     } catch (error) {
-        return Response.json({ message: `admin dashboard error: ${error}` }, { status: 500 });
-
+        return Response.json(
+            { message: `admin dashboard error: ${error}` },
+            { status: 500 },
+        );
     }
-
-
 }

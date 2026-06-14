@@ -36,6 +36,7 @@ function AdminDashboard() {
       const { data } = await axiosClient.get("/api/admin/dashboard");
       setStats(data.stats);
       setPartnerReviews(data.PendingPartnersReviews);
+      setPendingVehicleReviews(data.pendingVehicles);
     } catch (error) {
       console.log(error);
     }

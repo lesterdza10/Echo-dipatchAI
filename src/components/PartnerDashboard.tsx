@@ -3,14 +3,21 @@ import { RootState } from "@/redux/store";
 import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { motion } from "motion/react";
-import { Check, Clock, Lock, Video, CheckCircle2 } from "lucide-react";
+import {
+  Check,
+  Clock,
+  Lock,
+  Video,
+  CheckCircle2,
+  ArrowRight,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import RejectionCard from "./RejectionCard";
 import StatusCard from "./StatusCard";
 import ActionCard from "./ActionCard";
 import axiosClient from "@/lib/axiosClient";
 import PricingModal from "./PricingModal";
-import { IVehicle } from "@/models/vehicle.model";
+import Vehicle, { IVehicle } from "@/models/vehicle.model";
 
 type step = {
   id: number;
@@ -183,6 +190,37 @@ function PartnerDashboard() {
               description="Admin will start the video KYC process soon. Please wait."
             />
           ))}
+        {activeStep == 7 && vehicleData?.status === "pending" && (
+          <StatusCard
+            icon={<Clock size={18} />}
+            title="Pricing under review"
+            description="Admin is reviewing your pricing details."
+          />
+        )}
+        {activeStep == 7 && vehicleData?.status === "rejected" && (
+          <RejectionCard
+            title="Your pricing has been rejected"
+            reason={vehicleData.rejectionReason}
+            actionLabel="Review and Resubmit"
+            onAction={() => setShowPricing(true)}
+          />
+        )}
+        {activeStep == 8 && vehicleData?.status === "approved" && (
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-black text-white rounded-3xl mt-6 p-10 shadow-2xl"
+          >
+            <h2 className="text-2xl font-bold">🚀 You're all set!</h2>
+            <button
+              className="mt-6 bg-white text-black px-6 py-3 rounded-xl font-semibold
+            flex items-center gap-2"
+            >
+              Go to Bookings
+              <ArrowRight size={16} />
+            </button>
+          </motion.div>
+        )}
       </div>
       <PricingModal
         open={showPricing}

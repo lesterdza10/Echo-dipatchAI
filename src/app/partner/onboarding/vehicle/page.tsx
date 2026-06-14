@@ -61,6 +61,7 @@ function page() {
         },
       );
       setLoading(false);
+      router.push("/");
     } catch (error: any) {
       setError(error?.response?.data?.message ?? "An error occurred");
       setLoading(false);

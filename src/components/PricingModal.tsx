@@ -25,9 +25,9 @@ function PricingModal({ open, onClose, data }: PropsType) {
   useEffect(() => {
     if (data) {
       setPreview(data?.imageUrl || null);
-      setBaseFare(data?.baseFare.toString() || "");
-      setPricePerKm(data?.pricePerKm.toString() || "");
-      setWaitingCharge(data?.waitingCharge.toString() || "");
+      setBaseFare(data.baseFare?.toString() || "");
+      setPricePerKm(data.pricePerKm?.toString() || "");
+      setWaitingCharge(data.waitingCharge?.toString() || "");
     }
   }, [data]);
 
