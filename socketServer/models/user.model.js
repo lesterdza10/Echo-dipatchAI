@@ -1,7 +1,8 @@
 import mongoose from 'mongoose';
-import type { IUser } from '@/types/user';
 
-const UserSchema: mongoose.Schema<IUser> = new mongoose.Schema(
+
+
+const UserSchema= new mongoose.Schema(
 	{
 		name: { type: String, required: true },
 		email: { type: String, required: true, unique: true },
@@ -29,6 +30,6 @@ const UserSchema: mongoose.Schema<IUser> = new mongoose.Schema(
 	}
 );
 UserSchema.index({ location: '2dsphere' });
-const User: mongoose.Model<IUser> = (mongoose.models['User'] as mongoose.Model<IUser>) || mongoose.model<IUser>('User', UserSchema);
+const User=mongoose.model('User', UserSchema);
 
 export default User;

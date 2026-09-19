@@ -1,9 +1,11 @@
 "use client";
+import axios from "axios";
 import { ArrowLeft, MapPin, Navigation2, Search } from "lucide-react";
 import { motion } from "motion/react";
-import React from "react";
+import React, { useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import SearchMap from "@/components/SearchMap";
+import { IVehicle } from "@/models/vehicle.model";
 
 function page() {
   const router = useRouter();
@@ -18,7 +20,32 @@ function page() {
   const dropLat = Number(params.get("dropLat") || "");
   const dropLon = Number(params.get("dropLon") || "");
   const vehicle = params.get("vehicle") || "";
+  const [nearbyVehicles, setNearbyVehicles] = React.useState<IVehicle[]>([]);
+  const [loading, setLoading] = React.useState(false);
 
+  const getNearbyVehicles = async (
+    lat: number,
+    lon: number,
+    vehicleType: string,
+  ) => {
+    setLoading(true);
+    try {
+      const { data } = await axios.post("/api/vehicles/near-by", {
+        latitude: lat,
+        longitude: lon,
+        vehicleType,
+      });
+      console.log("Nearby vehicles data:", data);
+      setNearbyVehicles(data.vehicles || []);
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      console.error("Error fetching nearby vehicles:", error);
+    }
+  };
+  useEffect(() => {
+    getNearbyVehicles(pickupLat, pickupLon, vehicle);
+  }, [pickupLat, pickupLon, pickup]);
   return (
     <div className="min-h-screen bg-zinc-100 text-zinc-100 overflow-x-hidden">
       <div className="absolute top-5 left-5 z-50">
@@ -98,6 +125,22 @@ function page() {
                 size={14}
                 className="text-zinc-400 flex-shrink-0 mt-1.5"
               />
+            </div>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2 }}
+            className="flex items-center justify-between mb-4"
+          >
+            <div>
+              <h2 className="text-zinc-900 text-sm font-black tracking-tight">
+                {loading
+                  ? "Loading nearby vehicles..."
+                  : nearbyVehicles.length > 0
+                    ? "Nearby vehicles found"
+                    : "No nearby vehicles found"}
+              </h2>
             </div>
           </motion.div>
         </div>

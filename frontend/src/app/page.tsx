@@ -1,6 +1,7 @@
 import { authOptions } from "@/auth";
 import AdminDashboard from "@/components/AdminDashboard";
 import Footer from "@/components/Footer";
+import GeoUpdater from "@/components/GeoUpdater";
 import Homepage from "@/components/Homepage";
 import Nav from "@/components/Nav";
 import PartnerDashboard from "@/components/PartnerDashboard";
@@ -15,6 +16,7 @@ export default async function Home() {
 
   return (
     <div className="w-full min-h-screen bg-white">
+      <GeoUpdater userId={user?._id ? String(user._id) : undefined} />
       {user?.role === "partner" ? (
         <>
           <Nav />

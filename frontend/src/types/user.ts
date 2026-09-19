@@ -17,5 +17,11 @@ export interface IUser {
 	videoKycStatus: VideoKycStatus;
 	videoKycRoomId: string;
 	videoKycRejectionReason?: string;
+	socketId?: string;
+	location?: {
+		type: 'Point';
+		coordinates: [number, number];
+	};
+	isOnline?: boolean;
 
 }
