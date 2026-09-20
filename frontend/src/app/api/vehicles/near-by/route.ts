@@ -25,7 +25,7 @@ export async function POST(request: Request) {
         })
         const partnerIds = partners.map(partner => partner._id);
         if (partnerIds.length === 0) {
-            return new Response(JSON.stringify({ error: "No nearby partners found" }), { status: 200 });
+            return new Response(JSON.stringify([]), { status: 200 });
         }
         const vehicles = await Vehicle.find({
             owner: { $in: partnerIds },
