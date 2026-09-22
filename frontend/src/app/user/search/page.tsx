@@ -25,6 +25,7 @@ const vehicle_meta: any = {
   truck: { label: "Truck", icon: Truck },
 };
 export interface IVehicle {
+  _id: string;
   owner: string;
   type: vehicleType;
   vehicleModel: string;
@@ -267,7 +268,8 @@ function page() {
                       pickup,
                       drop,
                       vehicle: v.type,
-                      driver: v.owner,
+                      vehicleId: v?._id,
+                      driverId: String(v.owner),
                       fare: String(v.baseFare! + v.pricePerKm! * km),
                       pickupLat: String(pickupLat),
                       pickupLon: String(pickupLon),
@@ -275,7 +277,7 @@ function page() {
                       dropLon: String(dropLon),
                       mobile: String(mobile),
                     });
-                    router.push(`/checkout?${url.toString()}`);
+                    router.push(`/user/checkout?${url.toString()}`);
                   }}
                 />
               </motion.div>

@@ -1,5 +1,6 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import axios from "axios";
 import { AnimatePresence, motion } from "motion/react";
 import Image from "next/image";
 import Link from "next/link";
@@ -10,6 +11,7 @@ import { AppDispatch, RootState } from "@/redux/store";
 import { Bike, Car, ChevronRight, LogOut, Menu, Truck, X } from "lucide-react";
 import { signOut } from "next-auth/react";
 import { setUserData } from "@/redux/userSlice";
+import { getSocket } from "@/lib/socket";
 const navItems = ["Home", "About", "Bookings", "Contact"];
 function Nav() {
   const dispatch = useDispatch<AppDispatch>();
@@ -18,12 +20,30 @@ function Nav() {
   const [profileOpen, setProfileOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const userData = useSelector((state: RootState) => state.user?.userData);
+  const [pendingCount, setPendingCount] = useState(0);
   const router = useRouter();
   const handleLogout = async () => {
     await signOut({ redirect: false });
     dispatch(setUserData(null));
     setProfileOpen(false);
   };
+
+  const fetchCount = async () => {
+    try {
+      const { data } = await axios.get(
+        "/api/partner/bookings/pending-requests-count",
+      );
+      console.log(data);
+      setPendingCount(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    if (userData?.role == "partner") {
+      fetchCount();
+    }
+  }, [userData?.role]);
 
   return (
     <>
@@ -37,28 +57,56 @@ function Nav() {
         <div className="max-w-7xl mx-auto px-4 md:px-8 flex items-center justify-between">
           <Image src={"/logo.png"} alt="Logo" width={60} height={60} priority />
           <div className="hidden md:flex items-center gap-15">
-            {navItems.map((item, index) => {
-              let href = "";
-              if (item === "Home") {
-                href = "/";
-              } else {
-                href = "/${item.toLowerCase()}";
-              }
-              const isActive = pathName === href;
-              return (
+            {userData?.role == "partner" ? (
+              <>
                 <Link
-                  key={index}
-                  href={href}
-                  className={
-                    isActive
-                      ? "text-white"
-                      : "text-gray-400 hover:text-white text-sm font-bold"
-                  }
+                  className="relative text-sm font-medium text-gray-300 hover:text-white transition"
+                  href={"/"}
                 >
-                  {item}
+                  Home
                 </Link>
-              );
-            })}
+                <Link
+                  className="relative text-sm font-medium text-gray-300 hover:text-white transition"
+                  href={"/partner/pending-requests"}
+                >
+                  Pending Requests
+                  <span className="absolute -top-2 -right-5 w-6 h-6 bg-white text-black text-xs rounded-full flex items-center justify-center font-bold">
+                    {pendingCount ?? 0}
+                  </span>
+                </Link>
+                <Link
+                  className="relative text-sm font-medium text-gray-300 hover:text-white transition"
+                  href={"/partner/bookings"}
+                >
+                  Bookings
+                </Link>
+                <Link
+                  className="relative text-sm font-medium text-gray-300 hover:text-white transition"
+                  href={"/partner/active-ride"}
+                >
+                  Active Booking
+                </Link>
+              </>
+            ) : (
+              navItems.map((item, index) => {
+                const href =
+                  item === "Home" ? "/" : `/user/${item.toLowerCase()}`;
+                const isActive = pathName === href;
+                return (
+                  <Link
+                    key={index}
+                    href={href}
+                    className={
+                      isActive
+                        ? "text-white"
+                        : "text-gray-400 hover:text-white text-sm font-bold"
+                    }
+                  >
+                    {item}
+                  </Link>
+                );
+              })
+            )}
           </div>
           <div className="flex items-center gap-3 relative">
             <div className="hidden md:block relative">
@@ -170,12 +218,8 @@ function Nav() {
             <motion.div className="fixed top-[85px] left-1/2 -translate-x-1/2 w-[92%] bg-[#0B0B0B] rounded-2xl shadow-2xl z-40 md:hidden overflow-hidden">
               <div className="flex flex-col divide-y divite-white/10">
                 {navItems.map((item, index) => {
-                  let href = "";
-                  if (item === "Home") {
-                    href = "/";
-                  } else {
-                    href = "/${item.toLowerCase()}";
-                  }
+                  const href =
+                    item === "Home" ? "/" : `/user/${item.toLowerCase()}`;
                   return (
                     <Link
                       key={index}
