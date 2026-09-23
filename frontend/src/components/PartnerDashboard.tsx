@@ -18,6 +18,7 @@ import ActionCard from "./ActionCard";
 import axiosClient from "@/lib/axiosClient";
 import PricingModal from "./PricingModal";
 import Vehicle, { IVehicle } from "@/models/vehicle.model";
+import PartnerEarning from "./PartnerEarning";
 
 type step = {
   id: number;
@@ -82,7 +83,7 @@ function PartnerDashboard() {
   const progressPercentage = ((activeStep - 1) / (TotalSteps - 1)) * 100;
   return (
     <div className="min-h-screen bg-linear-to-br from-gray-100 to-gray-200 px-4 pt-28 pb-20">
-      <div className="max-w-7xl mx-auto space-x-16">
+      <div className="max-w-7xl mx-auto space-y-16">
         <div>
           <h1 className="text-4xl font-bold">Partner Dashboard</h1>
           <p className="text-gray-600 mt-3">
@@ -221,6 +222,8 @@ function PartnerDashboard() {
             </button>
           </motion.div>
         )}
+
+        <PartnerEarning />
       </div>
       <PricingModal
         open={showPricing}

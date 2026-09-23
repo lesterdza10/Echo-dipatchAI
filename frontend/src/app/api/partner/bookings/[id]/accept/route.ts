@@ -23,11 +23,11 @@ export async function GET(
         booking.paymentDeadline = new Date(Date.now() + 5 * 60 * 1000)
         await booking.save()
 
-        {/**await axios.post(`${process.env.NEXT_PUBLIC_SOCKET_SERVER_URL}/emit`, {
+        await axios.post(`${process.env.NEXT_PUBLIC_SOCKET_SERVER_URL}/emit`, {
             event: "accept-booking",
             userId: booking.user,
             data: booking.bookingStatus
-        }) */}
+        })
 
 
 

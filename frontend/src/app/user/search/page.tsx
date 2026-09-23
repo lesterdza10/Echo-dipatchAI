@@ -13,11 +13,15 @@ import {
   Zap,
 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import React, { useEffect } from "react";
+import React, { Suspense, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import SearchMap from "@/components/SearchMap";
+import dynamic from "next/dynamic";
 import { vehicleType } from "@/models/vehicle.model";
 import VehicleCard from "@/components/VehicleCard";
+
+const SearchMap = dynamic(() => import("@/components/SearchMap"), {
+  ssr: false,
+});
 const vehicle_meta: any = {
   compactor: { label: "Compactor", icon: Trash2 },
   pickup: { label: "Pickup", icon: CarFront },
@@ -40,7 +44,7 @@ export interface IVehicle {
   createdAt: Date;
   updatedAt: Date;
 }
-function page() {
+function SearchContent() {
   const router = useRouter();
   const params = useSearchParams();
 
@@ -289,4 +293,16 @@ function page() {
   );
 }
 
-export default page;
+export default function SearchPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-zinc-100 flex items-center justify-center text-zinc-500">
+          Loading search...
+        </div>
+      }
+    >
+      <SearchContent />
+    </Suspense>
+  );
+}

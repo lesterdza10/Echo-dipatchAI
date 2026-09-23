@@ -27,7 +27,7 @@ export async function POST(req: Request) {
 
     await connectDB()
 
-    const existing = await User.findOne({ email }).lean()
+    const existing = await User.findOne({ email })
     if (existing && existing.isEmailVerified) {
       return NextResponse.json({ error: 'User with this email already exists' }, { status: 409 })
     }

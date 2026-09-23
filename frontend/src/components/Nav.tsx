@@ -45,6 +45,17 @@ function Nav() {
     }
   }, [userData?.role]);
 
+  useEffect(() => {
+    const socket = getSocket();
+    console.log(socket);
+    socket.on("new-booking", (data) => {
+      setPendingCount((prev) => prev + 1);
+    });
+    return () => {
+      socket.off("new-booking");
+    };
+  }, []);
+
   return (
     <>
       <motion.div
@@ -279,6 +290,32 @@ function Nav() {
                     <ChevronRight size={16} className="ml-auto" />
                   </div>
                 )}
+                {userData.role == "partner" && (
+                  <div className="flex flex-col gap-4">
+                    <Link
+                      className="relative text-sm font-medium text-black hover:text-gray-500 transition flex items-center gap-2"
+                      href={"/partner/pending-requests"}
+                    >
+                      <span>Pending Requests</span>
+                      <span className="w-6 h-6 bg-black text-white text-xs rounded-full flex items-center justify-center font-bold">
+                        {pendingCount ?? 0}
+                      </span>
+                    </Link>
+                    <Link
+                      className="relative text-sm font-medium text-black hover:text-gray-500 transition"
+                      href={"/partner/bookings"}
+                    >
+                      Bookings
+                    </Link>
+                    <Link
+                      className="relative text-sm font-medium text-black hover:text-gray-500 transition"
+                      href={"/partner/active-ride"}
+                    >
+                      Active Ride
+                    </Link>
+                  </div>
+                )}
+
                 <button
                   className="w-full py-2 flex gap-3 items-center hover:bg-gray-100 rounded-xl mt-2"
                   onClick={handleLogout}

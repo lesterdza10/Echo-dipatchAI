@@ -26,6 +26,8 @@
     "react-dom": "19.2.4",
     "react-leaflet": "^5.0.0",
     "react-redux": "^9.2.0",
+    "rechart": "^0.0.1",
+    "recharts": "^3.10.1",
     "socket.io-client": "^4.8.3",
     "three": "^0.184.0",
     "three-stdlib": "^2.36.1"

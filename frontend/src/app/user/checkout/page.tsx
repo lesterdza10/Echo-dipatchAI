@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import {
   ArrowRight,
@@ -38,7 +38,7 @@ type Status =
   | "expired"
   | "payment"
   | "confirmed";
-function page() {
+function CheckoutContent() {
   const router = useRouter();
   const params = useSearchParams();
   const [pickUp, setPickUp] = useState(params.get("pickup") || "");
@@ -662,4 +662,11 @@ function page() {
     </div>
   );
 }
-export default page;
+
+export default function CheckoutPage() {
+  return (
+    <Suspense fallback={null}>
+      <CheckoutContent />
+    </Suspense>
+  );
+}

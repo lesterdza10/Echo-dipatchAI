@@ -44,7 +44,7 @@ function page() {
         mobileNumber,
       });
       setLoading(false);
-      router.push("/");
+      window.location.href = "/";
     } catch (error: any) {
       setError(
         error.response?.data?.message ||

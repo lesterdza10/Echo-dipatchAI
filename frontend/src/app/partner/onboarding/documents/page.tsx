@@ -32,7 +32,7 @@ function page() {
         formData,
       );
       setLoading(false);
-      router.push("/");
+      router.push("/partner/onboarding/bank");
     } catch (error: any) {
       setError(
         error.response?.data?.message ||

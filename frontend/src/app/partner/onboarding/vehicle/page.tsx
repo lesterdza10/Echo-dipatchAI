@@ -61,7 +61,7 @@ function page() {
         },
       );
       setLoading(false);
-      router.push("/");
+      router.push("/partner/onboarding/documents");
     } catch (error: any) {
       setError(error?.response?.data?.message ?? "An error occurred");
       setLoading(false);

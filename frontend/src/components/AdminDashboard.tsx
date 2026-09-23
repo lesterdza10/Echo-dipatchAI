@@ -16,6 +16,7 @@ import KeyPi from "./KeyPi";
 import TabButton from "./TabButton";
 import { AnimatePresence } from "motion/react";
 import ContentList from "./ContentList";
+import AdminEarning from "./AdminEarning";
 
 type Stats = {
   TotalPartners: number;
@@ -100,6 +101,7 @@ function AdminDashboard() {
             variants="Rejected"
           />
         </div>
+
         <div className="bg-white rounded-2xl p-2 border shadow-lg border-gray-200 flex flex-wrap gap-2">
           <TabButton
             active={activeTab === "partner"}
@@ -148,6 +150,7 @@ function AdminDashboard() {
             )}
           </motion.div>
         </AnimatePresence>
+        <AdminEarning />
       </main>
     </div>
   );
