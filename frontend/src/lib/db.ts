@@ -36,6 +36,13 @@ export async function connectDB(): Promise<mongoose.Connection> {
 
   try {
     cached.conn = await cached.promise;
+    await cached.conn.collection('users').updateMany(
+      {
+        'location.coordinates': { $exists: true },
+        'location.type': { $exists: false },
+      },
+      { $set: { 'location.type': 'Point' } },
+    );
   } catch (e) {
     cached.promise = null;
     throw e;

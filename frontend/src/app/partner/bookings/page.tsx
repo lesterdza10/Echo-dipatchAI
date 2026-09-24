@@ -19,7 +19,7 @@ import React, { useEffect, useState } from "react";
 import { motion } from "motion/react";
 import { useRouter } from "next/navigation";
 interface IBooking {
-  user: IUser;
+  user: IUser | null;
   driver: IUser;
   vehicle: IVehicle;
 
@@ -201,7 +201,7 @@ function page() {
                       <div className="flex-1">
                         <div className="flex items-center justify-between">
                           <h3 className="font-semibold text-gray-900">
-                            {b.user.name.toUpperCase() || "Customer"}
+                            {b.user?.name?.toUpperCase() || "Customer"}
                           </h3>
                           <span
                             className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(b.bookingStatus)}`}

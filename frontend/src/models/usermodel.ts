@@ -20,7 +20,7 @@ const UserSchema: mongoose.Schema<IUser> = new mongoose.Schema(
 		socketId: { type: String, default: null },
 		isOnline: { type: Boolean, default: false, index: true },
 		location: {
-			type: { type: String, enum: ['Point'] },
+			type: { type: String, enum: ['Point'], default: 'Point' },
 			coordinates: { type: [Number], default: [0, 0] }
 		}
 	},
