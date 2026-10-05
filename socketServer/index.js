@@ -27,6 +27,12 @@ const io=new Server(server,{
     }
 });
 
+app.post("/emit-heatmap",(req,res)=>{
+const {lat,lng}=req.body
+io.to("admin-room").emit("new-booking-point",{lat,lng})
+return res.json({success:true})
+})
+
 app.post("/emit",async (req,res)=>{
 const {event,userId,data}=req.body
 try {
@@ -54,6 +60,10 @@ io.on('connection',(socket)=>{
         await User.findByIdAndUpdate(userId, { location: { type: 'Point', coordinates: [longitude, latitude] } });
         
     })
+    socket.on("join-admin",()=>{
+        socket.join("admin-room");
+    })
+
     socket.on("join-ride",(bookingId)=>{
     console.log("join ride",bookingId)
     socket.join(`ride-${bookingId}`)

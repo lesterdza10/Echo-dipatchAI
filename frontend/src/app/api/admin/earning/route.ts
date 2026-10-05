@@ -1,11 +1,17 @@
 
+import { authOptions } from "@/auth";
 import { connectDB } from "@/lib/db";
 import Booking from "@/models/booking.model";
+import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
 export async function GET() {
     try {
         await connectDB()
+        const session = await getServerSession(authOptions);
+        if (!session || !session.user?.email || session.user.role !== "admin") {
+            return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+        }
         const sevenDaysAgo = new Date()
         sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
 

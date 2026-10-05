@@ -1,6 +1,7 @@
 "use client";
 import { motion } from "motion/react";
 import axiosClient from "@/lib/axiosClient";
+import Link from "next/link";
 import {
   User,
   CheckCircle2,
@@ -9,6 +10,7 @@ import {
   User2,
   Video,
   Truck,
+  Flame,
 } from "lucide-react";
 import NextImage from "next/image";
 import React, { useEffect } from "react";
@@ -68,9 +70,18 @@ function AdminDashboard() {
             />
           </div>
 
-          <div className="flex items-center gap-2 text-xs px-3 py-1 rounded-full bg-black text-white">
-            <User size={16} />
-            Admin Dashboard
+          <div className="flex items-center gap-2">
+            <Link
+              href="/admin/heatmap"
+              className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full bg-orange-500 hover:bg-orange-600 transition-colors text-white font-semibold shadow"
+            >
+              <Flame size={14} />
+              Live Heatmap
+            </Link>
+            <div className="flex items-center gap-2 text-xs px-3 py-1 rounded-full bg-black text-white">
+              <User size={16} />
+              Admin Dashboard
+            </div>
           </div>
         </div>
       </div>

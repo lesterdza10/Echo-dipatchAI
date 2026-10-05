@@ -100,6 +100,14 @@ export async function POST(req: NextRequest) {
             data: booking
         })
 
+        // Fire-and-forget: broadcast pick-up point to admin heatmap in real-time
+        if (pickUpLocation?.coordinates?.length === 2) {
+            axios.post(`${process.env.NEXT_PUBLIC_SOCKET_SERVER_URL}/emit-heatmap`, {
+                lat: pickUpLocation.coordinates[1],
+                lng: pickUpLocation.coordinates[0],
+            }).catch(() => { /* non-critical, don't block the response */ })
+        }
+
 
         return NextResponse.json(
             booking, { status: 200 }
